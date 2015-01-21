@@ -94,10 +94,58 @@ namespace LSTests
         [Fact]
         public void MyTestMethod()
         {
-            Assert.Equal(6, Ls.Find(new[] { 1, 0, 1, 1, 0, 1, 1, 1 }));
+            Assert.Equal(7, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 1, 1 }));
+            Assert.Equal(7, Ls.Find(new[] { 0, 0, 0, 0, 0, 0, 0, 0 }));
+
+            Assert.Equal(8, Ls.Find(new[] { 0, 1, 1, 1, 1, 1, 1, 1 }));
             Assert.Equal(8, Ls.Find(new[] { 1, 0, 1, 1, 1, 1, 1, 1 }));
-            Assert.Equal(4, Ls.Find(new[] { 1, 0, 0, 0, 0, 1, 1, 1 }));
-            //Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 1, 1 }));        
+            Assert.Equal(8, Ls.Find(new[] { 1, 1, 0, 1, 1, 1, 1, 1 }));
+            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 0, 1, 1, 1, 1 }));
+            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 0, 1, 1, 1 }));
+            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 1, 0, 1, 1 }));
+            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 0, 1 }));
+            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 1, 0 }));
+
+            Assert.Equal(7, Ls.Find(new[] { 0, 0, 1, 1, 1, 1, 1, 1 }));
+            Assert.Equal(6, Ls.Find(new[] { 1, 0, 0, 1, 1, 1, 1, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 0, 1, 1, 1, 1 }));
+            Assert.Equal(4, Ls.Find(new[] { 1, 1, 1, 0, 0, 1, 1, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 1, 0, 0, 1, 1 }));
+            Assert.Equal(6, Ls.Find(new[] { 1, 1, 1, 1, 1, 0, 0, 1 }));
+            Assert.Equal(7, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 0, 0 }));
+
+            Assert.Equal(7, Ls.Find(new[] { 0, 0, 0, 1, 1, 1, 1, 1 }));
+            Assert.Equal(6, Ls.Find(new[] { 1, 0, 0, 0, 1, 1, 1, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 0, 0, 1, 1, 1 }));
+            Assert.Equal(4, Ls.Find(new[] { 1, 1, 1, 0, 0, 0, 1, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 1, 0, 0, 0, 1 }));
+            Assert.Equal(6, Ls.Find(new[] { 1, 1, 1, 1, 1, 0, 0, 0 }));
+
+            Assert.Equal(7, Ls.Find(new[] { 0, 0, 0, 0, 1, 1, 1, 1 }));
+            Assert.Equal(6, Ls.Find(new[] { 1, 0, 0, 0, 0, 1, 1, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 0, 0, 0, 1, 1 }));
+            Assert.Equal(4, Ls.Find(new[] { 1, 1, 1, 0, 0, 0, 0, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 1, 0, 0, 0, 0 }));
+
+            Assert.Equal(7, Ls.Find(new[] { 0, 1, 1, 1, 1, 1, 1, 0 }));
+            Assert.Equal(6, Ls.Find(new[] { 1, 0, 1, 1, 1, 1, 0, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 1, 1, 0, 1, 1 }));
+
+            Assert.Equal(5, Ls.Find(new[] { 0, 0, 1, 1, 1, 1, 0, 0 }));
+            Assert.Equal(3, Ls.Find(new[] { 1, 0, 0, 1, 1, 0, 0, 1 }));
+
+
+            Assert.Equal(6, Ls.Find(new[] { 0, 0, 1, 1, 1, 1, 0, 1 }));
+            Assert.Equal(5, Ls.Find(new[] { 0, 1, 0, 1, 1, 0, 1, 1 }));
+
+            Assert.Equal(3, Ls.Find(new[] { 1, 0, 1, 0, 1, 0, 1, 0 }));
+            Assert.Equal(3, Ls.Find(new[] { 0, 1, 0, 1, 0, 1, 0, 1 }));
+
+         
+            //Assert.Equal(8, Ls.Find(new[] { 1, 0, 0, 1, 1, 1, 1, 1 }));
+            //Assert.Equal(6, Ls.Find(new[] { 1, 0, 1, 1, 0, 1, 1, 1 }));
+            //Assert.Equal(5, Ls.Find(new[] { 1, 0, 0, 0, 0, 1, 1, 1 }));
+            //Assert.Equal(5, Ls.Find(new[] { 0, 1, 1, 1, 1, 0, 0, 0 }));
         }
     }
 }
