@@ -7,11 +7,6 @@ using Xunit;
 
 namespace LSTests
 {
-
-
-
-
-
     public class Counter
     {
         private int maxCounter = 0;
@@ -25,31 +20,44 @@ namespace LSTests
             this.p = p;
         }
 
+        private bool Switched
+        {
+            get { return switched; }
+        }
+        private bool NotSwitched
+        {
+            get { return !Switched; }
+        }
+
         public void Count(int i)
         {
+            var counting = Counting(i);
+            var notCounting = !counting;
 
-            var counted = i == p;
-            var notCounted = !counted;
-            var notSwitched = !switched;
-
-            if (counted || notCounted)
+            if (counting || notCounting && NotSwitched)
             {
                 sequenceCounter1++;
-                if (switched) sequenceCounter2++;                    
             }
-            else
+
+            if (counting && Switched || notCounting && Switched)
             {
-                if (!switched)
-                {
-                    sequenceCounter1++;
-                    Switch();
-                }
-                else
-                {
-                    sequenceCounter2++;
-                    SwapCounters();
-                }
+                sequenceCounter2++;
             }
+
+            if (notCounting && Switched)
+            {
+                SwapCounters();
+            }
+
+            if (notCounting && NotSwitched)
+            {
+                Switch();
+            }
+        }
+
+        private bool Counting(int i)
+        {
+            return i == p;
         }
 
         private void SwapCounters()
@@ -67,7 +75,7 @@ namespace LSTests
         public int Check()
         {
             int seq = sequenceCounter1;
-            if (!switched)
+            if (!Switched)
             {
                 seq--;
             }
@@ -79,8 +87,6 @@ namespace LSTests
 
     public class Ls
     {
-
-
         public static int Find(int[] sequence)
         {
             var oneCounter = new Counter(1);
