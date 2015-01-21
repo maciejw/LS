@@ -14,55 +14,65 @@ namespace LSTests
 
     public class Counter
     {
-        private int max = 0;
-        private int seq1 = 0;
-        private int seq2 = 0;
-        private bool switchAvailable = true;
-        private bool count2 = false;
+        private int maxCounter = 0;
+        private int sequenceCounter1 = 0;
+        private int sequenceCounter2 = 0;
+        private bool switched = false;
         private int p;
-        private int nonP;
 
-        public Counter(int p, int nonP)
+        public Counter(int p)
         {
             this.p = p;
-            this.nonP = nonP;
         }
 
         public void Count(int i)
         {
-            if (i == p)
-            {
-                seq1++;
-            }
-            if (i == p && count2)
-            {
-                seq2++;
-            }
-            if (i == nonP && !switchAvailable)
-            {
-                max = Math.Max(max, seq1);
-                seq2++;
-                seq1 = seq2;
-                seq2 = 0;
-            }
-            if (i == nonP && switchAvailable)
-            {
-                seq1++;
-                switchAvailable = false;
-                count2 = true;
 
+            var counted = i == p;
+            var notCounted = !counted;
+            var notSwitched = !switched;
+
+            if (counted || notCounted)
+            {
+                sequenceCounter1++;
+                if (switched) sequenceCounter2++;                    
             }
+            else
+            {
+                if (!switched)
+                {
+                    sequenceCounter1++;
+                    Switch();
+                }
+                else
+                {
+                    sequenceCounter2++;
+                    SwapCounters();
+                }
+            }
+        }
+
+        private void SwapCounters()
+        {
+            maxCounter = Math.Max(maxCounter, sequenceCounter1);
+            sequenceCounter1 = sequenceCounter2;
+            sequenceCounter2 = 0;
+        }
+
+        private void Switch()
+        {
+            switched = true;
         }
 
         public int Check()
         {
-            int i = seq1;
-            if (switchAvailable)
+            int seq = sequenceCounter1;
+            if (!switched)
             {
-                i--;
+                seq--;
             }
 
-            return Math.Max(max, i);
+            return Math.Max(maxCounter, seq);
         }
     }
 
@@ -73,9 +83,8 @@ namespace LSTests
 
         public static int Find(int[] sequence)
         {
-
-            var oneCounter = new Counter(1, 0);
-            var zeroCounter = new Counter(0, 1);
+            var oneCounter = new Counter(1);
+            var zeroCounter = new Counter(0);
 
             foreach (var i in sequence)
             {
