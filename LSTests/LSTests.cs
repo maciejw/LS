@@ -56,28 +56,38 @@ namespace LSTests
             }
         }
 
-        public int Check() { return Math.Max(maxCounter, (NotSwitched) ? sequenceCounter1 - 1 : sequenceCounter1); }
+        public int Result() { return Math.Max(maxCounter, (NotSwitched) ? sequenceCounter1 - 1 : sequenceCounter1); }
     }
 
+    public class CounterAccumulator
+    {
+        Counter counter1;
+        Counter counter0;
 
-    public class Ls
+        public CounterAccumulator()
+        {
+            counter1 = new Counter(1);
+            counter0 = new Counter(0);
+        }
+        public CounterAccumulator Count(int i)
+        {
+            counter1.Count(i);
+            counter0.Count(i);
+
+            return this;
+        }
+        public int Result() { return Math.Max(counter1.Result(), counter0.Result()); }
+    }
+
+    public class LS
     {
         public static int Find(int[] sequence)
         {
-            return sequence.Aggregate(
-                Tuple.Create(new Counter(1), new Counter(0)),
-                (t, i) =>
-                {
-                    t.Item1.Count(i); t.Item2.Count(i);
-                    return t;
-                },
-                t => Math.Max(t.Item1.Check(), t.Item2.Check())
-            );
+            return sequence.Aggregate(new CounterAccumulator(), (acc, i) => acc.Count(i), acc => acc.Result());
         }
     }
 
-
-    public class LTTests
+    public class LSTests
     {
         public static IEnumerable<object[]> Data()
         {
@@ -144,15 +154,7 @@ namespace LSTests
         [MemberData("Data")]
         public void Check(int expected, int[] array)
         {
-            Assert.Equal(expected, Ls.Find(array));
-
-            var r = new Random();
-
-            for (int i = 0; i < 100; i++)
-            {
-                Console.WriteLine(r.Next(0, 1));
-            }
-
+            Assert.Equal(expected, LS.Find(array));
         }
     }
 }
