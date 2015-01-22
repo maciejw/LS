@@ -12,21 +12,22 @@ namespace LSTests
         private int maxCounter = 0;
         private int sequenceCounter1 = 0;
         private int sequenceCounter2 = 0;
-        private bool switched = false;
         private int p;
 
-        public Counter(int p)
-        {
-            this.p = p;
-        }
+        public Counter(int p) { this.p = p; }
 
-        private bool Switched
+        private bool Counting(int i) { return i == p; }
+
+        private void Switch() { Switched = true; }
+
+        private bool Switched { get; set; }
+        private bool NotSwitched { get { return !Switched; } }
+
+        private void SwapCounters()
         {
-            get { return switched; }
-        }
-        private bool NotSwitched
-        {
-            get { return !Switched; }
+            maxCounter = Math.Max(maxCounter, sequenceCounter1);
+            sequenceCounter1 = sequenceCounter2;
+            sequenceCounter2 = 0;
         }
 
         public void Count(int i)
@@ -55,33 +56,7 @@ namespace LSTests
             }
         }
 
-        private bool Counting(int i)
-        {
-            return i == p;
-        }
-
-        private void SwapCounters()
-        {
-            maxCounter = Math.Max(maxCounter, sequenceCounter1);
-            sequenceCounter1 = sequenceCounter2;
-            sequenceCounter2 = 0;
-        }
-
-        private void Switch()
-        {
-            switched = true;
-        }
-
-        public int Check()
-        {
-            int seq = sequenceCounter1;
-            if (!Switched)
-            {
-                seq--;
-            }
-
-            return Math.Max(maxCounter, seq);
-        }
+        public int Check() { return Math.Max(maxCounter, (NotSwitched) ? sequenceCounter1 - 1 : sequenceCounter1); }
     }
 
 
@@ -89,95 +64,94 @@ namespace LSTests
     {
         public static int Find(int[] sequence)
         {
-            var oneCounter = new Counter(1);
-            var zeroCounter = new Counter(0);
-
-            foreach (var i in sequence)
-            {
-                oneCounter.Count(i);
-                zeroCounter.Count(i);
-            }
-            return Math.Max(oneCounter.Check(), zeroCounter.Check());
+            return sequence.Aggregate(
+                Tuple.Create(new Counter(1), new Counter(0)),
+                (t, i) =>
+                {
+                    t.Item1.Count(i); t.Item2.Count(i);
+                    return t;
+                },
+                t => Math.Max(t.Item1.Check(), t.Item2.Check())
+            );
         }
     }
 
 
-    public class Class1
+    public class LTTests
     {
-        [Fact]
-        public void MyTestMethod()
+        public static IEnumerable<object[]> Data()
         {
-            Assert.Equal(7, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 1, 1 }));
+            yield return new object[] { 7, new[] { 1, 1, 1, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 8, new[] { 0, 1, 1, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 8, new[] { 1, 0, 1, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 8, new[] { 1, 1, 0, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 8, new[] { 1, 1, 1, 0, 1, 1, 1, 1 } };
+            yield return new object[] { 8, new[] { 1, 1, 1, 1, 0, 1, 1, 1 } };
+            yield return new object[] { 8, new[] { 1, 1, 1, 1, 1, 0, 1, 1 } };
+            yield return new object[] { 8, new[] { 1, 1, 1, 1, 1, 1, 0, 1 } };
+            yield return new object[] { 8, new[] { 1, 1, 1, 1, 1, 1, 1, 0 } };
+            yield return new object[] { 7, new[] { 0, 0, 1, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 6, new[] { 1, 0, 0, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 5, new[] { 1, 1, 0, 0, 1, 1, 1, 1 } };
+            yield return new object[] { 4, new[] { 1, 1, 1, 0, 0, 1, 1, 1 } };
+            yield return new object[] { 5, new[] { 1, 1, 1, 1, 0, 0, 1, 1 } };
+            yield return new object[] { 6, new[] { 1, 1, 1, 1, 1, 0, 0, 1 } };
+            yield return new object[] { 7, new[] { 1, 1, 1, 1, 1, 1, 0, 0 } };
+            yield return new object[] { 6, new[] { 0, 0, 0, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 5, new[] { 1, 0, 0, 0, 1, 1, 1, 1 } };
+            yield return new object[] { 4, new[] { 1, 1, 0, 0, 0, 1, 1, 1 } };
+            yield return new object[] { 4, new[] { 1, 1, 1, 0, 0, 0, 1, 1 } };
+            yield return new object[] { 5, new[] { 1, 1, 1, 1, 0, 0, 0, 1 } };
+            yield return new object[] { 6, new[] { 1, 1, 1, 1, 1, 0, 0, 0 } };
+            yield return new object[] { 5, new[] { 0, 0, 0, 0, 1, 1, 1, 1 } };
+            yield return new object[] { 5, new[] { 1, 0, 0, 0, 0, 1, 1, 1 } };
+            yield return new object[] { 5, new[] { 1, 1, 0, 0, 0, 0, 1, 1 } };
+            yield return new object[] { 5, new[] { 1, 1, 1, 0, 0, 0, 0, 1 } };
+            yield return new object[] { 5, new[] { 1, 1, 1, 1, 0, 0, 0, 0 } };
+            yield return new object[] { 7, new[] { 0, 1, 1, 1, 1, 1, 1, 0 } };
+            yield return new object[] { 6, new[] { 1, 0, 1, 1, 1, 1, 0, 1 } };
+            yield return new object[] { 5, new[] { 1, 1, 0, 1, 1, 0, 1, 1 } };
+            yield return new object[] { 5, new[] { 0, 0, 1, 1, 1, 1, 0, 0 } };
+            yield return new object[] { 3, new[] { 1, 0, 0, 1, 1, 0, 0, 1 } };
+            yield return new object[] { 6, new[] { 0, 0, 1, 1, 1, 1, 0, 1 } };
+            yield return new object[] { 5, new[] { 0, 1, 0, 1, 1, 0, 1, 1 } };
+            yield return new object[] { 3, new[] { 1, 0, 1, 0, 1, 0, 1, 0 } };
+            yield return new object[] { 3, new[] { 0, 1, 0, 1, 0, 1, 0, 1 } };
+            yield return new object[] { 7, new[] { 0, 0, 0, 0, 0, 0, 0, 0 } };
+            yield return new object[] { 6, new[] { 1, 0, 1, 1, 0, 1, 1, 1 } };
+            yield return new object[] { 4, new[] { 1, 1, 0, 1, 0, 0 } };
+            yield return new object[] { 5, new[] { 1, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 5, new[] { 0, 0, 0, 0, 0, 0 } };
+            yield return new object[] { 4, new[] { 1, 1, 1, 0, 0, 0 } };
+            yield return new object[] { 3, new[] { 1, 1, 0, 0, 1, 1 } };
+            yield return new object[] { 3, new[] { 0, 0, 1, 1, 0, 0 } };
+            yield return new object[] { 5, new[] { 1, 1, 0, 0, 0, 0 } };
+            yield return new object[] { 5, new[] { 0, 0, 0, 0, 1, 1 } };
+            yield return new object[] { 3, new[] { 1, 0, 1, 0, 1, 0 } };
+            yield return new object[] { 3, new[] { 0, 1, 0, 1, 0, 1 } };
+            yield return new object[] { 1, new[] { 1 } };
+            yield return new object[] { 2, new[] { 0, 1 } };
+            yield return new object[] { 1, new[] { 1, 1 } };
+            yield return new object[] { 3, new[] { 1, 1, 0 } };
+            yield return new object[] { 3, new[] { 0, 1, 1, 0 } };
+            yield return new object[] { 2, new[] { 1, 1, 1 } };
+            yield return new object[] { 10, new[] { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 } };
+            yield return new object[] { 10, new[] { 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 } };
+            //            yield return new object[] { };
+        }
 
-            Assert.Equal(8, Ls.Find(new[] { 0, 1, 1, 1, 1, 1, 1, 1 }));
-            Assert.Equal(8, Ls.Find(new[] { 1, 0, 1, 1, 1, 1, 1, 1 }));
-            Assert.Equal(8, Ls.Find(new[] { 1, 1, 0, 1, 1, 1, 1, 1 }));
-            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 0, 1, 1, 1, 1 }));
-            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 0, 1, 1, 1 }));
-            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 1, 0, 1, 1 }));
-            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 0, 1 }));
-            Assert.Equal(8, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 1, 0 }));
+        [Theory]
+        [MemberData("Data")]
+        public void Check(int expected, int[] array)
+        {
+            Assert.Equal(expected, Ls.Find(array));
 
-            Assert.Equal(7, Ls.Find(new[] { 0, 0, 1, 1, 1, 1, 1, 1 }));
-            Assert.Equal(6, Ls.Find(new[] { 1, 0, 0, 1, 1, 1, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 0, 1, 1, 1, 1 }));
-            Assert.Equal(4, Ls.Find(new[] { 1, 1, 1, 0, 0, 1, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 1, 0, 0, 1, 1 }));
-            Assert.Equal(6, Ls.Find(new[] { 1, 1, 1, 1, 1, 0, 0, 1 }));
-            Assert.Equal(7, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 0, 0 }));
+            var r = new Random();
 
-            Assert.Equal(6, Ls.Find(new[] { 0, 0, 0, 1, 1, 1, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 0, 0, 0, 1, 1, 1, 1 }));
-            Assert.Equal(4, Ls.Find(new[] { 1, 1, 0, 0, 0, 1, 1, 1 }));
-            Assert.Equal(4, Ls.Find(new[] { 1, 1, 1, 0, 0, 0, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 1, 0, 0, 0, 1 }));
-            Assert.Equal(6, Ls.Find(new[] { 1, 1, 1, 1, 1, 0, 0, 0 }));
-
-            Assert.Equal(5, Ls.Find(new[] { 0, 0, 0, 0, 1, 1, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 0, 0, 0, 0, 1, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 0, 0, 0, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 0, 0, 0, 0, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 1, 0, 0, 0, 0 }));
-
-            Assert.Equal(7, Ls.Find(new[] { 0, 1, 1, 1, 1, 1, 1, 0 }));
-            Assert.Equal(6, Ls.Find(new[] { 1, 0, 1, 1, 1, 1, 0, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 1, 1, 0, 1, 1 }));
-
-            Assert.Equal(5, Ls.Find(new[] { 0, 0, 1, 1, 1, 1, 0, 0 }));
-            Assert.Equal(3, Ls.Find(new[] { 1, 0, 0, 1, 1, 0, 0, 1 }));
-
-
-            Assert.Equal(6, Ls.Find(new[] { 0, 0, 1, 1, 1, 1, 0, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 0, 1, 0, 1, 1, 0, 1, 1 }));
-
-            Assert.Equal(3, Ls.Find(new[] { 1, 0, 1, 0, 1, 0, 1, 0 }));
-            Assert.Equal(3, Ls.Find(new[] { 0, 1, 0, 1, 0, 1, 0, 1 }));
-
-            Assert.Equal(7, Ls.Find(new[] { 0, 0, 0, 0, 0, 0, 0, 0 }));
-
-            Assert.Equal(6, Ls.Find(new[] { 1, 0, 0, 1, 1, 1, 1, 1 }));
-            Assert.Equal(6, Ls.Find(new[] { 1, 0, 1, 1, 0, 1, 1, 1 }));
-
-            Assert.Equal(4, Ls.Find(new[] { 1, 1, 0, 1, 0, 0 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 1, 1, 1, 1 }));
-            Assert.Equal(5, Ls.Find(new[] { 0, 0, 0, 0, 0, 0 }));
-            Assert.Equal(4, Ls.Find(new[] { 1, 1, 1, 0, 0, 0 }));
-            Assert.Equal(3, Ls.Find(new[] { 1, 1, 0, 0, 1, 1 }));
-            Assert.Equal(3, Ls.Find(new[] { 0, 0, 1, 1, 0, 0 }));
-            Assert.Equal(5, Ls.Find(new[] { 1, 1, 0, 0, 0, 0 }));
-            Assert.Equal(5, Ls.Find(new[] { 0, 0, 0, 0, 1, 1 }));
-            Assert.Equal(3, Ls.Find(new[] { 1, 0, 1, 0, 1, 0 }));
-            Assert.Equal(3, Ls.Find(new[] { 0, 1, 0, 1, 0, 1 }));
-            Assert.Equal(1, Ls.Find(new[] { 1 }));
-            Assert.Equal(2, Ls.Find(new[] { 0, 1 }));
-            Assert.Equal(1, Ls.Find(new[] { 1, 1 }));
-            Assert.Equal(3, Ls.Find(new[] { 1, 1, 0 }));
-            Assert.Equal(3, Ls.Find(new[] { 0, 1, 1, 0 }));
-            Assert.Equal(2, Ls.Find(new[] { 1, 1, 1 }));
-            Assert.Equal(10, Ls.Find(new[] { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 }));
-            Assert.Equal(10, Ls.Find(new[] { 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 }));
-
-
+            for (int i = 0; i < 100; i++)
+            {
+                Console.WriteLine(r.Next(0, 1));
+            }
 
         }
     }
